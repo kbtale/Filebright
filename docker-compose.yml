@@ -1,0 +1,66 @@
+version: "3.8"
+
+services:
+  app:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: filebright_app
+    restart: unless-stopped
+    working_dir: /var/www
+    volumes:
+      - ./backend:/var/www
+    depends_on:
+      - db
+    networks:
+      - filebright_net
+
+  web:
+    image: nginx:alpine
+    container_name: filebright_web
+    restart: unless-stopped
+    ports:
+      - "8000:80"
+    volumes:
+      - ./backend:/var/www
+      - ./backend/nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - app
+    networks:
+      - filebright_net
+
+  db:
+    image: postgres:alpine
+    container_name: filebright_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_DATABASE:-filebright}
+      POSTGRES_USER: ${DB_USERNAME:-user}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-secret}
+    ports:
+      - "5432:5432"
+    volumes:
+      - filebright_db_data:/var/lib/postgresql/data
+    networks:
+      - filebright_net
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: filebright_frontend
+    restart: unless-stopped
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    networks:
+      - filebright_net
+
+networks:
+  filebright_net:
+    driver: bridge
+
+volumes:
+  filebright_db_data:

@@ -1,0 +1,21 @@
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Development and OS files
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+node_modules/
+vendor/
+
+# Build and logs
+/frontend/dist/
+/backend/public/build/
+*.log
+
+# Project Documentation & Inspection
+roadmap.md
+db_inspect.json
