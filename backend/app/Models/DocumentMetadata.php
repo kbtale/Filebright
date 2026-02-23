@@ -12,6 +12,7 @@ class DocumentMetadata extends Model
     protected $fillable = [
         'user_id',
         'filename',
+        'mime_type',
         'path',
         'status',
         'vector_id',

@@ -35,4 +35,9 @@ return [
         ],
     ],
 
+    'openrouter' => [
+        'key' => env('OPENROUTER_API_KEY'),
+        'embedding_model' => env('OPENROUTER_EMBEDDING_MODEL', 'text-embedding-3-small'),
+    ],
+
 ];
