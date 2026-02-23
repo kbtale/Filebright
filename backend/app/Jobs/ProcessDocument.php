@@ -2,9 +2,8 @@
 
 namespace App\Jobs;
 
-use App\Models\DocumentMetadata;
-use App\Services\DocumentParserService;
-use App\Services\TextChunkerService;
+use App\Services\EmbeddingService;
+use App\Services\VectorStorageService;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Facades\Log;
@@ -21,8 +20,12 @@ class ProcessDocument implements ShouldQueue
         $this->document = $document;
     }
 
-    public function handle(DocumentParserService $parser, TextChunkerService $chunker): void
-    {
+    public function handle(
+        DocumentParserService $parser,
+        TextChunkerService $chunker,
+        EmbeddingService $embeddingService,
+        VectorStorageService $vectorStorage
+    ): void {
         $this->document->update(['status' => 'processing']);
 
         try {
@@ -34,8 +37,19 @@ class ProcessDocument implements ShouldQueue
             }
 
             $chunks = $chunker->chunk($text);
+            $embeddings = [];
 
-            Log::info("Document processed successfully: {$this->document->filename}", [
+            foreach ($chunks as $chunk) {
+                $vector = $embeddingService->getEmbedding($chunk);
+                if (empty($vector)) {
+                    throw new \Exception("Failed to generate embedding for a chunk.");
+                }
+                $embeddings[] = $vector;
+            }
+
+            $vectorStorage->storeChunks($this->document->id, $chunks, $embeddings);
+
+            Log::info("Document processed and stored: {$this->document->filename}", [
                 'chunk_count' => count($chunks)
             ]);
 

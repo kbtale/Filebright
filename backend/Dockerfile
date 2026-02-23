@@ -8,12 +8,15 @@ RUN apt-get update && apt-get install -y \
   libonig-dev \
   libxml2-dev \
   libpq-dev \
+  libssl-dev \
   zip \
   unzip \
   && rm -rf /var/lib/apt/lists/*
 
 # Install PHP extensions
-RUN docker-php-ext-install pdo pdo_pgsql mbstring exif pcntl bcmath gd
+RUN docker-php-ext-install pdo pdo_pgsql mbstring exif pcntl bcmath gd \
+  && pecl install mongodb \
+  && docker-php-ext-enable mongodb
 
 # Get latest Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
