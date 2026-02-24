@@ -57,8 +57,7 @@ const uploadFiles = (files) => {
   width: 100%;
   max-width: 600px;
   height: 400px;
-  border: 2px dashed var(--surface-border);
-  border-radius: 24px;
+  border-radius: var(--radius-lg);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -68,12 +67,11 @@ const uploadFiles = (files) => {
   &:hover,
   &.is-dragging {
     border-color: var(--primary-color);
-    background: hsla(260, 80%, 70%, 0.05);
-    transform: translateY(-4px);
+    background: rgba(255, 255, 255, 0.05);
+    transform: translateY(-2px);
 
     .upload-icon {
       color: var(--primary-color);
-      transform: scale(1.1);
     }
   }
 

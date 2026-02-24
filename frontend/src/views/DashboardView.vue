@@ -73,25 +73,119 @@ onMounted(() => {
   </div>
 </template>
 
-<style lang="scss">
+<style lang="scss" scoped>
+.app-container {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  position: relative;
+  z-index: 1;
+}
+
+.sidebar {
+  width: 320px;
+  display: flex;
+  flex-direction: column;
+  padding: 2rem 1.5rem;
+  border-right: 1px solid var(--glass-border);
+
+  .brand h1 {
+    font-size: 1.5rem;
+    margin-bottom: 3rem;
+    color: var(--text-main);
+  }
+
+  nav {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 0.85rem 1.25rem;
+      border-radius: var(--radius-md);
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: var(--transition-smooth);
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.05);
+        color: var(--text-main);
+      }
+
+      &.active {
+        background: var(--glass-bg);
+        border: 1px solid var(--glass-border);
+        color: var(--primary-color);
+      }
+    }
+  }
+
+  .sidebar-footer {
+    margin-top: auto;
+  }
+}
+
+.content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+
+  .top-bar {
+    height: 72px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 3rem;
+    border-bottom: 1px solid var(--glass-border);
+
+    .user-profile {
+      .avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: var(--radius-sm);
+        background: var(--glass-bg);
+        border: 1px solid var(--glass-border);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: var(--text-main);
+      }
+    }
+  }
+
+  .viewport {
+    flex: 1;
+    padding: 3rem;
+    overflow-y: auto;
+    display: flex;
+    justify-content: center;
+  }
+}
+
 .logout-btn {
   display: flex;
   align-items: center;
   gap: 0.75rem;
   width: 100%;
-  padding: 0.75rem 1rem;
-  margin-top: 1rem;
+  padding: 0.75rem 1.25rem;
+  margin-top: 2rem;
   background: transparent;
   border: 1px solid var(--glass-border);
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   color: var(--text-muted);
   cursor: pointer;
   transition: var(--transition-smooth);
 
   &:hover {
-    background: hsla(0, 80%, 60%, 0.1);
-    color: #ef4444;
-    border-color: hsla(0, 80%, 60%, 0.2);
+    background: rgba(248, 113, 113, 0.1);
+    color: #f87171;
+    border-color: rgba(248, 113, 113, 0.2);
   }
 }
 </style>

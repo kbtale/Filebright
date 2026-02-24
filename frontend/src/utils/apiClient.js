@@ -31,8 +31,10 @@ export const apiClient = {
       }
 
       if (!response.ok) {
-        const error = await response.json()
-        throw new Error(error.message || 'API request failed')
+        const errorData = await response.json()
+        const apiError = new Error(errorData.message || 'API request failed')
+        apiError.errors = errorData.errors
+        throw apiError
       }
 
       return await response.json()

@@ -112,17 +112,18 @@ const handleSend = () => {
   &.user {
     flex-direction: row-reverse;
     .message-bubble {
-      background: var(--primary-color);
-      color: var(--bg-color);
-      border: none;
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, 0.2);
     }
   }
 
   .avatar {
     width: 36px;
     height: 36px;
-    border-radius: 10px;
-    background: var(--surface-border);
+    border-radius: var(--radius-sm);
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--glass-border);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -131,13 +132,15 @@ const handleSend = () => {
 
   .message-bubble {
     max-width: 70%;
-    padding: 1rem 1.25rem;
-    border-radius: 18px;
+    padding: 0.85rem 1.15rem;
+    border-radius: var(--radius-md);
     font-size: 0.95rem;
     line-height: 1.5;
 
     &.loading {
       padding: 0.75rem;
+      background: transparent;
+      border: none;
       color: var(--primary-color);
     }
   }
@@ -149,8 +152,8 @@ const handleSend = () => {
   .input-glass {
     display: flex;
     align-items: center;
-    padding: 0.5rem 0.5rem 0.5rem 1.5rem;
-    border-radius: 20px;
+    padding: 0.4rem 0.4rem 0.4rem 1.25rem;
+    border-radius: var(--radius-md);
 
     input {
       flex: 1;
@@ -166,11 +169,11 @@ const handleSend = () => {
     }
 
     .send-btn {
-      width: 44px;
-      height: 44px;
-      border-radius: 16px;
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-sm);
       background: var(--primary-color);
-      color: var(--bg-color);
+      color: #fff;
       border: none;
       display: flex;
       align-items: center;
@@ -179,8 +182,8 @@ const handleSend = () => {
       transition: var(--transition-smooth);
 
       &:hover:not(:disabled) {
-        transform: scale(1.05);
-        box-shadow: 0 4px 12px var(--primary-glow);
+        transform: translateY(-1px);
+        filter: brightness(1.1);
       }
 
       &:disabled {

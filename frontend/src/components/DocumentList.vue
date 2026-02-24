@@ -78,12 +78,12 @@ const getStatusIcon = (status) => {
       align-items: center;
       gap: 0.75rem;
       padding: 0.75rem 1rem;
-      border-radius: 10px;
+      border-radius: var(--radius-sm);
       transition: var(--transition-smooth);
       margin-bottom: 0.25rem;
 
       &:hover {
-        background: hsla(230, 20%, 20%, 0.5);
+        background: rgba(255, 255, 255, 0.05);
       }
 
       .doc-icon {

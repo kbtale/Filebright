@@ -22,16 +22,24 @@ const handleSubmit = async () => {
   isLoading.value = true;
 
   const endpoint = isLogin.value ? "/login" : "/register";
+  const payload = isLogin.value
+    ? { email: form.email, password: form.password }
+    : { ...form };
 
   try {
-    const data = await apiClient.post(endpoint, form);
+    const data = await apiClient.post(endpoint, payload);
     if (data?.token) {
       authStore.setToken(data.token);
       authStore.setUser(data.user);
       router.push("/dashboard");
     }
   } catch (err) {
-    error.value = err.message || "Authentication failed";
+    if (err.errors) {
+      const firstErrorKey = Object.keys(err.errors)[0];
+      error.value = err.errors[firstErrorKey][0];
+    } else {
+      error.value = err.message || "Authentication failed";
+    }
   } finally {
     isLoading.value = false;
   }
@@ -47,7 +55,7 @@ const handleSubmit = async () => {
       </div>
 
       <form @submit.prevent="handleSubmit" class="auth-form">
-        <div v-if="!isLogin" class="input-group">
+        <div v-if="!isLogin" class="input-group glass">
           <User :size="18" />
           <input
             v-model="form.name"
@@ -57,7 +65,7 @@ const handleSubmit = async () => {
           />
         </div>
 
-        <div class="input-group">
+        <div class="input-group glass">
           <Mail :size="18" />
           <input
             v-model="form.email"
@@ -67,7 +75,7 @@ const handleSubmit = async () => {
           />
         </div>
 
-        <div class="input-group">
+        <div class="input-group glass">
           <Lock :size="18" />
           <input
             v-model="form.password"
@@ -77,7 +85,7 @@ const handleSubmit = async () => {
           />
         </div>
 
-        <div v-if="!isLogin" class="input-group">
+        <div v-if="!isLogin" class="input-group glass">
           <Lock :size="18" />
           <input
             v-model="form.password_confirmation"
@@ -91,7 +99,7 @@ const handleSubmit = async () => {
           {{ error }}
         </div>
 
-        <button type="submit" :disabled="isLoading" class="submit-btn">
+        <button type="submit" :disabled="isLoading" class="submit-btn glass">
           <Loader2 v-if="isLoading" class="spin" :size="20" />
           <template v-else>
             <span>{{ isLogin ? "Sign In" : "Sign Up" }}</span>
@@ -120,37 +128,23 @@ const handleSubmit = async () => {
   display: flex;
   justify-content: center;
   align-items: center;
-  background:
-    radial-gradient(
-      circle at top right,
-      hsla(260, 80%, 70%, 0.15),
-      transparent 40%
-    ),
-    radial-gradient(
-      circle at bottom left,
-      hsla(230, 80%, 70%, 0.1),
-      transparent 40%
-    );
+  position: relative;
+  z-index: 1;
 }
 
 .auth-card {
   width: 100%;
-  max-width: 440px;
+  max-width: 420px;
   padding: 3rem;
-  border-radius: 32px;
+  border-radius: var(--radius-lg);
   text-align: center;
+  z-index: 1;
 
   .auth-header {
     margin-bottom: 2.5rem;
     h1 {
       font-size: 2.5rem;
-      background: linear-gradient(
-        to right,
-        var(--text-main),
-        var(--primary-color)
-      );
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+      color: var(--text-main);
       margin-bottom: 0.5rem;
     }
     p {
@@ -168,16 +162,12 @@ const handleSubmit = async () => {
     position: relative;
     display: flex;
     align-items: center;
-    background: hsla(230, 20%, 20%, 0.4);
-    border: 1px solid var(--glass-border);
-    border-radius: 12px;
+    border-radius: var(--radius-md);
     padding: 0 1.25rem;
     transition: var(--transition-smooth);
     color: var(--text-muted);
 
     &:focus-within {
-      border-color: var(--primary-color);
-      box-shadow: 0 0 0 4px var(--primary-glow);
       color: var(--primary-color);
     }
 
@@ -200,10 +190,9 @@ const handleSubmit = async () => {
 .submit-btn {
   margin-top: 1rem;
   padding: 1rem;
-  background: var(--primary-color);
-  color: var(--bg-color);
+  color: #fff;
   border: none;
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   font-weight: 600;
   display: flex;
   align-items: center;
@@ -213,8 +202,8 @@ const handleSubmit = async () => {
   transition: var(--transition-smooth);
 
   &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 24px var(--primary-glow);
+    transform: translateY(-1px);
+    background: rgba(255, 255, 255, 0.08);
   }
 
   &:disabled {

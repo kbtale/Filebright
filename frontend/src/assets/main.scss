@@ -4,19 +4,22 @@
   --font-body: "Inter", sans-serif;
   --font-heading: "Outfit", sans-serif;
 
-  --bg-color: hsl(230, 20%, 8%);
-  --surface-color: hsl(230, 20%, 12%);
-  --surface-border: hsl(230, 20%, 18%);
-  --primary-color: hsl(260, 80%, 70%);
-  --primary-glow: hsla(260, 80%, 70%, 0.3);
-  --text-main: hsl(230, 10%, 90%);
-  --text-muted: hsl(230, 10%, 60%);
+  /* Frosty Obsidian Palette */
+  --bg-color: hsl(230, 20%, 4%);
+  --primary-color: hsl(190, 80%, 55%); /* Cyber Cyan */
+  --text-main: hsl(0, 0%, 100%);
+  --text-muted: hsla(0, 0%, 100%, 0.6);
 
-  --glass-bg: hsla(230, 20%, 12%, 0.7);
-  --glass-border: hsla(230, 20%, 20%, 0.5);
-  --glass-blur: blur(12px);
+  /* Real Glassmorphism Tokens */
+  --glass-bg: rgba(255, 255, 255, 0.03);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --glass-blur: blur(20px);
+  
+  --radius-lg: 14px;
+  --radius-md: 10px;
+  --radius-sm: 6px;
 
-  --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-smooth: all 0.3s ease;
 }
 
 * {
@@ -47,8 +50,9 @@ h4 {
 .glass {
   background: var(--glass-bg);
   backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
   border: 1px solid var(--glass-border);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
 }
 
 /* Scrollbar styling */
