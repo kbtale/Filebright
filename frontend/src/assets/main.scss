@@ -1,0 +1,70 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap");
+
+:root {
+  --font-body: "Inter", sans-serif;
+  --font-heading: "Outfit", sans-serif;
+
+  --bg-color: hsl(230, 20%, 8%);
+  --surface-color: hsl(230, 20%, 12%);
+  --surface-border: hsl(230, 20%, 18%);
+  --primary-color: hsl(260, 80%, 70%);
+  --primary-glow: hsla(260, 80%, 70%, 0.3);
+  --text-main: hsl(230, 10%, 90%);
+  --text-muted: hsl(230, 10%, 60%);
+
+  --glass-bg: hsla(230, 20%, 12%, 0.7);
+  --glass-border: hsla(230, 20%, 20%, 0.5);
+  --glass-blur: blur(12px);
+
+  --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--bg-color);
+  color: var(--text-main);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+/* Glassmorphism utility */
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-color);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--surface-border);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
