@@ -14,5 +14,7 @@ Route::middleware('auth:sanctum')->group(function () {
     });
     
     Route::post('/logout', [AuthController::class, 'logout']);
+    Route::get('/documents', [DocumentController::class, 'index']);
     Route::post('/upload', [DocumentController::class, 'upload']);
+    Route::post('/chat', [\App\Http\Controllers\ChatController::class, 'chat']);
 });

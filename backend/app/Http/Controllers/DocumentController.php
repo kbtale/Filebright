@@ -8,6 +8,15 @@ use Illuminate\Http\Request;
 
 class DocumentController extends Controller
 {
+    public function index(Request $request)
+    {
+        $documents = DocumentMetadata::where('user_id', $request->user()->id)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return response()->json($documents);
+    }
+
     public function upload(Request $request)
     {
         $request->validate([

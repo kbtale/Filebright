@@ -22,7 +22,7 @@ class AuthTest extends TestCase
         ]);
 
         $response->assertStatus(201)
-                 ->assertJsonStructure(['access_token', 'token_type', 'user']);
+                 ->assertJsonStructure(['token', 'token_type', 'user']);
                  
         $this->assertDatabaseHas('users', ['email' => 'john@example.com']);
     }
@@ -39,7 +39,7 @@ class AuthTest extends TestCase
         ]);
 
         $response->assertStatus(200)
-                 ->assertJsonStructure(['access_token', 'token_type', 'user']);
+                 ->assertJsonStructure(['token', 'token_type', 'user']);
     }
     
     public function test_user_can_upload_document()

@@ -47,7 +47,12 @@ class ProcessDocument implements ShouldQueue
                 $embeddings[] = $vector;
             }
 
-            $vectorStorage->storeChunks($this->document->id, $chunks, $embeddings);
+            $vectorStorage->storeChunks(
+                $this->document->id,
+                $this->document->user_id,
+                $chunks,
+                $embeddings
+            );
 
             Log::info("Document processed and stored: {$this->document->filename}", [
                 'chunk_count' => count($chunks)
