@@ -19,18 +19,7 @@ const handleFileSelect = (e) => {
 
 const uploadFiles = (files) => {
   Array.from(files).forEach((file) => {
-    // Add to store with pending status
-    const newDoc = {
-      id: Date.now() + Math.random(),
-      filename: file.name,
-      status: "pending",
-      created_at: new Date().toISOString(),
-    };
-    documentStore.addDocument(newDoc);
-
-    setTimeout(() => {
-      documentStore.updateDocumentStatus(newDoc.id, "processing");
-    }, 1000);
+    documentStore.uploadFile(file);
   });
 };
 </script>

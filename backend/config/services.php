@@ -38,6 +38,7 @@ return [
     'openrouter' => [
         'key' => env('OPENROUTER_API_KEY'),
         'embedding_model' => env('OPENROUTER_EMBEDDING_MODEL', 'text-embedding-3-small'),
+        'chat_model' => env('OPENROUTER_CHAT_MODEL', 'openai/gpt-3.5-turbo'),
     ],
 
 ];

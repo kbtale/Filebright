@@ -17,7 +17,7 @@ class VectorStorageService
     /**
      * Store processed chunks and their embeddings in MongoDB.
      */
-    public function storeChunks(int $documentId, array $chunks, array $embeddings): void
+    public function storeChunks(int $documentId, int $userId, array $chunks, array $embeddings): void
     {
         try {
             foreach ($chunks as $index => $content) {
@@ -26,6 +26,7 @@ class VectorStorageService
                     'content' => $content,
                     'embedding' => $embeddings[$index],
                     'metadata' => [
+                        'user_id' => $userId,
                         'chunk_index' => $index,
                     ]
                 ]);

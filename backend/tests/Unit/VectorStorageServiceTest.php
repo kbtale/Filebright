@@ -26,7 +26,7 @@ class VectorStorageServiceTest extends TestCase
         $chunks = ["chunk 1", "chunk 2"];
         $embeddings = [[0.1], [0.2]];
 
-        $service->storeChunks(1, $chunks, $embeddings);
+        $service->storeChunks(1, 1, $chunks, $embeddings);
 
         $this->assertTrue(true);
     }
