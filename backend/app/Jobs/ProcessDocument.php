@@ -2,6 +2,9 @@
 
 namespace App\Jobs;
 
+use App\Models\DocumentMetadata;
+use App\Services\DocumentParserService;
+use App\Services\TextChunkerService;
 use App\Services\EmbeddingService;
 use App\Services\VectorStorageService;
 use Illuminate\Contracts\Queue\ShouldQueue;
