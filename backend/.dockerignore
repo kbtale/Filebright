@@ -1,0 +1,17 @@
+vendor
+node_modules
+.env
+.idea
+.vscode
+.dockerignore
+storage/*.key
+.git
+.gitignore
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.DS_Store
+storage/framework/cache/data/*
+storage/framework/sessions/*
+storage/framework/views/*.php
+bootstrap/cache/*.php

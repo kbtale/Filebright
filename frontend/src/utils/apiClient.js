@@ -1,15 +1,18 @@
 import { authStore } from '../stores/authStore'
 
-const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api'
+const BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api'
 
 export const apiClient = {
   async request(endpoint, options = {}) {
     const url = `${BASE_URL}${endpoint}`
     
     const headers = {
-      'Content-Type': 'application/json',
       'Accept': 'application/json',
       ...options.headers
+    }
+
+    if (!(options.body instanceof FormData)) {
+      headers['Content-Type'] = 'application/json'
     }
 
     if (authStore.token) {

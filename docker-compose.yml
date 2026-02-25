@@ -8,10 +8,13 @@ services:
     container_name: filebright_app
     restart: unless-stopped
     working_dir: /var/www
+    env_file: ./backend/.env
     volumes:
-      - ./backend:/var/www
+      - ./backend/storage:/var/www/storage
+      - ./backend/php.ini:/usr/local/etc/php/conf.d/custom.ini
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     networks:
       - filebright_net
 
@@ -22,8 +25,24 @@ services:
     ports:
       - "8000:80"
     volumes:
-      - ./backend:/var/www
+      - ./backend/public:/var/www/public
       - ./backend/nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - app
+    networks:
+      - filebright_net
+
+  worker:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: filebright_worker
+    restart: unless-stopped
+    working_dir: /var/www
+    env_file: ./backend/.env
+    command: ["php", "artisan", "queue:work"]
+    volumes:
+      - ./backend/storage:/var/www/storage
     depends_on:
       - app
     networks:
@@ -41,6 +60,11 @@ services:
       - "5432:5432"
     volumes:
       - filebright_db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME:-user} -d ${DB_DATABASE:-filebright}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     networks:
       - filebright_net
 
@@ -51,9 +75,7 @@ services:
     container_name: filebright_frontend
     restart: unless-stopped
     ports:
-      - "5173:5173"
-    volumes:
-      - ./frontend:/app
+      - "80:80"
     networks:
       - filebright_net
 
