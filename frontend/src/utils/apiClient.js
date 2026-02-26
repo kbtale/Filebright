@@ -68,5 +68,17 @@ export const apiClient = {
       body: formData,
       headers
     })
+  },
+
+  delete(endpoint, options = {}) {
+    return this.request(endpoint, { ...options, method: 'DELETE' })
+  },
+
+  patch(endpoint, data, options = {}) {
+    return this.request(endpoint, {
+      ...options,
+      method: 'PATCH',
+      body: JSON.stringify(data)
+    })
   }
 }

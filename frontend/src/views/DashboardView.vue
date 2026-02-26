@@ -1,9 +1,8 @@
 <script setup>
-import { onMounted, onUnmounted, ref } from "vue";
+import { onMounted, onUnmounted, ref, computed } from "vue";
 import {
   FileText,
   MessageSquare,
-  LogOut,
   ChevronLeft,
   ChevronRight,
   Menu,
@@ -12,6 +11,8 @@ import {
 import UploadZone from "../components/UploadZone.vue";
 import DocumentList from "../components/DocumentList.vue";
 import ChatInterface from "../components/chat/ChatInterface.vue";
+import UserProfileMenu from "../components/UserProfileMenu.vue";
+import EmptyState from "../components/EmptyState.vue";
 import { authStore } from "../stores/authStore";
 import { documentStore } from "../stores/documentStore";
 import { useRouter } from "vue-router";
@@ -21,6 +22,8 @@ const activeTab = ref("documents");
 const isSidebarCollapsed = ref(false);
 const isMobileMenuOpen = ref(false);
 const isMobile = ref(false);
+
+const hasDocuments = computed(() => documentStore.documents.length > 0);
 
 const updateMobileStatus = () => {
   isMobile.value = window.innerWidth <= 768;
@@ -103,10 +106,6 @@ onUnmounted(() => {
 
       <div class="sidebar-footer">
         <DocumentList :collapsed="isSidebarCollapsed && !isMobile" />
-        <button class="logout-btn" @click="handleLogout">
-          <LogOut :size="20" />
-          <span class="label">Logout</span>
-        </button>
       </div>
     </aside>
 
@@ -122,15 +121,14 @@ onUnmounted(() => {
             <span class="top-bar-title" v-if="isSidebarCollapsed">Filebright</span>
           </transition>
         </div>
-        <div class="user-profile">
-          <div class="avatar">
-            {{ authStore.user?.name?.substring(0, 2).toUpperCase() || "JD" }}
-          </div>
-        </div>
+        <UserProfileMenu @logout="handleLogout" />
       </header>
 
       <section class="viewport">
-        <UploadZone v-if="activeTab === 'documents'" />
+        <template v-if="activeTab === 'documents'">
+          <EmptyState v-if="!hasDocuments && !documentStore.isLoading" />
+          <UploadZone v-else />
+        </template>
         <ChatInterface v-else />
       </section>
     </main>
@@ -168,7 +166,7 @@ onUnmounted(() => {
   transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   flex-shrink: 0;
 
-  // All label text — always in the DOM, animated via CSS
+  // All label text - always in the DOM, animated via CSS
   .label {
     overflow: hidden;
     white-space: nowrap;
@@ -309,21 +307,6 @@ onUnmounted(() => {
       }
     }
 
-    .user-profile {
-      .avatar {
-        width: 40px;
-        height: 40px;
-        border-radius: var(--radius-sm);
-        background: var(--glass-bg);
-        border: 1px solid var(--glass-border);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 0.85rem;
-        font-weight: 600;
-        color: var(--text-main);
-      }
-    }
   }
 
   .viewport {
@@ -333,35 +316,11 @@ onUnmounted(() => {
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
   }
 }
 
-.logout-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.6rem;
-  width: 100%;
-  padding: 0.85rem 1.5rem;
-  margin-top: 2rem;
-  background: transparent;
-  border: 1px solid var(--glass-border);
-  border-radius: var(--radius-md);
-  color: var(--text-muted);
-  cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  font-family: inherit;
-  font-size: inherit;
-  text-align: left;
-  white-space: nowrap;
-  overflow: hidden;
 
-  &:hover {
-    background: rgba(248, 113, 113, 0.1);
-    color: #f87171;
-    border-color: rgba(248, 113, 113, 0.2);
-  }
-}
 
 .mobile-only {
   display: none;

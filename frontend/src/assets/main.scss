@@ -6,15 +6,29 @@
 
   /* Frosty Obsidian Palette */
   --bg-color: hsl(230, 20%, 4%);
-  --primary-color: hsl(190, 80%, 55%); /* Cyber Cyan */
+  --primary-color: hsl(175, 75%, 48%);
   --text-main: hsl(0, 0%, 100%);
   --text-muted: hsla(0, 0%, 100%, 0.6);
+
+  /* Semantic Colors */
+  --color-success: hsl(158, 64%, 42%);
+  --color-danger: hsl(4, 72%, 62%);
+  --color-danger-rgb: 210, 88, 83;
+  --color-warning: hsl(38, 85%, 58%);
+
+  /* Accent Palette */
+  --accent-rose: hsl(338, 60%, 52%);
+  --accent-rose-dark: hsl(338, 55%, 32%);
+  --accent-violet: hsl(272, 55%, 50%);
+  --accent-violet-dark: hsl(272, 50%, 30%);
+  --accent-sapphire: hsl(215, 65%, 50%);
+  --accent-sapphire-dark: hsl(215, 60%, 30%);
 
   /* Real Glassmorphism Tokens */
   --glass-bg: rgba(255, 255, 255, 0.03);
   --glass-border: rgba(255, 255, 255, 0.1);
   --glass-blur: blur(20px);
-  
+
   --radius-lg: 14px;
   --radius-md: 10px;
   --radius-sm: 6px;

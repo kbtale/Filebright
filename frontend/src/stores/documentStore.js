@@ -1,4 +1,4 @@
-import { reactive } from 'vue'
+import { reactive, computed } from 'vue'
 import { apiClient } from '../utils/apiClient'
 
 export const documentStore = reactive({
@@ -6,6 +6,15 @@ export const documentStore = reactive({
   isLoading: false,
   error: null,
   isPolling: false,
+  searchQuery: '',
+
+  get filteredDocuments() {
+    if (!this.searchQuery.trim()) return this.documents
+    const q = this.searchQuery.toLowerCase()
+    return this.documents.filter(d =>
+      d.filename.toLowerCase().includes(q)
+    )
+  },
 
   async fetchDocuments() {
     this.isLoading = true
@@ -46,6 +55,33 @@ export const documentStore = reactive({
       if (index !== -1) {
         this.documents[index].status = 'failed'
       }
+    }
+  },
+
+  async deleteDocument(id) {
+    try {
+      await apiClient.delete(`/documents/${id}`)
+      this.documents = this.documents.filter(d => d.id !== id)
+      return true
+    } catch (err) {
+      this.error = 'Failed to delete document'
+      return false
+    }
+  },
+
+  async renameDocument(id, newFilename) {
+    try {
+      const data = await apiClient.patch(`/documents/${id}/rename`, { filename: newFilename })
+      if (data?.document) {
+        const index = this.documents.findIndex(d => d.id === id)
+        if (index !== -1) {
+          this.documents[index] = data.document
+        }
+      }
+      return true
+    } catch (err) {
+      this.error = 'Failed to rename document'
+      return false
     }
   },
 

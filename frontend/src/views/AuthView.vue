@@ -309,12 +309,12 @@ const handleSubmit = async () => {
 }
 
 .error-msg {
-  color: #ef4444;
+  color: var(--color-danger);
   font-size: 0.85rem;
-  background: hsla(0, 80%, 60%, 0.1);
+  background: rgba(var(--color-danger-rgb), 0.1);
   padding: 0.75rem;
   border-radius: 8px;
-  border: 1px solid hsla(0, 80%, 60%, 0.2);
+  border: 1px solid rgba(var(--color-danger-rgb), 0.2);
 }
 
 .auth-footer {
