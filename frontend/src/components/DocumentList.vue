@@ -2,6 +2,13 @@
 import { FileText, Loader2, CheckCircle2, AlertCircle } from "lucide-vue-next";
 import { documentStore } from "../stores/documentStore";
 
+const props = defineProps({
+  collapsed: {
+    type: Boolean,
+    default: false,
+  },
+});
+
 const getStatusIcon = (status) => {
   switch (status) {
     case "processing":
@@ -17,7 +24,7 @@ const getStatusIcon = (status) => {
 </script>
 
 <template>
-  <div class="document-list">
+  <div class="document-list" :class="{ 'is-collapsed': collapsed }">
     <div class="list-header">
       <h4>Recent Documents</h4>
     </div>
@@ -26,12 +33,13 @@ const getStatusIcon = (status) => {
       No documents yet
     </div>
 
-    <div v-else class="items">
+    <div v-if="documentStore.documents.length > 0" class="items">
       <div
         v-for="doc in documentStore.documents"
         :key="doc.id"
         class="doc-item"
         :class="doc.status"
+        :title="collapsed ? doc.filename : ''"
       >
         <div class="doc-icon">
           <component
@@ -52,6 +60,11 @@ const getStatusIcon = (status) => {
 <style lang="scss" scoped>
 .document-list {
   margin-top: 2rem;
+  overflow: hidden;
+  max-height: 500px;
+  transition:
+    max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    margin 0.3s ease;
 
   .list-header h4 {
     font-size: 0.75rem;
@@ -69,9 +82,20 @@ const getStatusIcon = (status) => {
     font-style: italic;
   }
 
+  &.is-collapsed {
+    max-height: 0;
+    opacity: 0;
+    margin-top: 0;
+    transition:
+      max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+      opacity 0.15s ease 0.25s,
+      margin 0.3s ease;
+  }
+
   .items {
-    max-height: 400px;
+    max-height: 300px;
     overflow-y: auto;
+    overflow-x: hidden;
 
     .doc-item {
       display: flex;
@@ -93,12 +117,19 @@ const getStatusIcon = (status) => {
         }
       }
 
+      .doc-info {
+        display: flex;
+        flex-direction: column;
+        transition: opacity 0.2s ease, max-width 0.3s ease;
+        opacity: 1;
+        max-width: 200px;
+        overflow: hidden;
+        white-space: nowrap;
+      }
+
       .filename {
         font-size: 0.9rem;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        max-width: 160px;
+        color: var(--text-main);
       }
 
       .status-text {
@@ -116,6 +147,17 @@ const getStatusIcon = (status) => {
       &.processing .doc-icon {
         color: var(--primary-color);
       }
+    }
+  }
+
+  &.is-collapsed {
+    max-height: 0;
+    opacity: 0;
+    margin-top: 0;
+
+    .doc-info {
+      opacity: 0;
+      max-width: 0;
     }
   }
 }
