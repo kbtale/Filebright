@@ -10,21 +10,38 @@ const isLogin = ref(true);
 const isLoading = ref(false);
 const error = ref("");
 
-const form = reactive({
+const loginForm = reactive({
+  email: "",
+  password: "",
+});
+
+const registerForm = reactive({
   name: "",
   email: "",
   password: "",
   password_confirmation: "",
 });
 
+const toggleMode = () => {
+  isLogin.value = !isLogin.value;
+  // Sync emails when toggling
+  if (isLogin.value) {
+    loginForm.email = registerForm.email;
+    loginForm.password = "";
+  } else {
+    registerForm.email = loginForm.email;
+    registerForm.password = "";
+    registerForm.password_confirmation = "";
+  }
+  error.value = "";
+};
+
 const handleSubmit = async () => {
   error.value = "";
   isLoading.value = true;
 
   const endpoint = isLogin.value ? "/login" : "/register";
-  const payload = isLogin.value
-    ? { email: form.email, password: form.password }
-    : { ...form };
+  const payload = isLogin.value ? { ...loginForm } : { ...registerForm };
 
   try {
     const data = await apiClient.post(endpoint, payload);
@@ -54,23 +71,16 @@ const handleSubmit = async () => {
         <p>{{ isLogin ? "Welcome back" : "Create your account" }}</p>
       </div>
 
-      <form @submit.prevent="handleSubmit" class="auth-form">
-        <div v-if="!isLogin" class="input-group glass">
-          <User :size="18" />
-          <input
-            v-model="form.name"
-            type="text"
-            placeholder="Full Name"
-            required
-          />
-        </div>
-
+      <!-- Login Form -->
+      <form v-if="isLogin" key="login-form" @submit.prevent="handleSubmit" class="auth-form">
         <div class="input-group glass">
           <Mail :size="18" />
           <input
-            v-model="form.email"
+            v-model="loginForm.email"
             type="email"
-            placeholder="Email Address"
+            name="login_email"
+            id="login_email"
+            placeholder="yourname@example.com"
             required
           />
         </div>
@@ -78,19 +88,12 @@ const handleSubmit = async () => {
         <div class="input-group glass">
           <Lock :size="18" />
           <input
-            v-model="form.password"
+            v-model="loginForm.password"
             type="password"
-            placeholder="Password"
-            required
-          />
-        </div>
-
-        <div v-if="!isLogin" class="input-group glass">
-          <Lock :size="18" />
-          <input
-            v-model="form.password_confirmation"
-            type="password"
-            placeholder="Confirm Password"
+            name="login_password"
+            id="login_password"
+            placeholder="Enter your password"
+            autocomplete="current-password"
             required
           />
         </div>
@@ -102,14 +105,83 @@ const handleSubmit = async () => {
         <button type="submit" :disabled="isLoading" class="submit-btn glass">
           <Loader2 v-if="isLoading" class="spin" :size="20" />
           <template v-else>
-            <span>{{ isLogin ? "Sign In" : "Sign Up" }}</span>
+            <span>Sign In</span>
+            <ArrowRight :size="18" />
+          </template>
+        </button>
+      </form>
+
+      <!-- Register Form -->
+      <form v-else key="register-form" @submit.prevent="handleSubmit" class="auth-form">
+        <div class="input-group glass">
+          <User :size="18" />
+          <input
+            v-model="registerForm.name"
+            type="text"
+            name="register_name"
+            id="register_name"
+            placeholder="Your full name (e.g. John Doe)"
+            required
+          />
+        </div>
+
+        <div class="input-group glass">
+          <Mail :size="18" />
+          <input
+            v-model="registerForm.email"
+            type="email"
+            name="register_email"
+            id="register_email"
+            placeholder="yourname@example.com"
+            required
+          />
+        </div>
+
+        <div class="input-group glass">
+          <Lock :size="18" />
+          <input
+            v-model="registerForm.password"
+            type="password"
+            name="register_password"
+            id="register_password"
+            placeholder="Create a strong password (min. 8 chars)"
+            autocomplete="new-password"
+            required
+          />
+        </div>
+
+        <div class="input-hint">
+          Must include letters, numbers, and symbols.
+        </div>
+
+        <div class="input-group glass">
+          <Lock :size="18" />
+          <input
+            v-model="registerForm.password_confirmation"
+            type="password"
+            name="register_password_confirmation"
+            id="register_password_confirmation"
+            placeholder="Confirm Password"
+            autocomplete="new-password"
+            required
+          />
+        </div>
+
+        <div v-if="error" class="error-msg">
+          {{ error }}
+        </div>
+
+        <button type="submit" :disabled="isLoading" class="submit-btn glass">
+          <Loader2 v-if="isLoading" class="spin" :size="20" />
+          <template v-else>
+            <span>Sign Up</span>
             <ArrowRight :size="18" />
           </template>
         </button>
       </form>
 
       <div class="auth-footer">
-        <button @click="isLogin = !isLogin" class="toggle-btn">
+        <button @click="toggleMode" class="toggle-btn">
           {{
             isLogin
               ? "Don't have an account? Sign up"
@@ -183,8 +255,32 @@ const handleSubmit = async () => {
       &::placeholder {
         color: var(--text-muted);
       }
+
+      // Override Chrome autofill via transition-delay hack.
+      // Chrome internally forces autofill colors, so delaying
+      // transitions on all affected properties neutralizes it.
+      &:-webkit-autofill,
+      &:-webkit-autofill:hover,
+      &:-webkit-autofill:focus,
+      &:-webkit-autofill:active {
+        -webkit-text-fill-color: var(--text-main);
+        background-color: transparent;
+        caret-color: white;
+        transition:
+          background-color 9999s ease-in-out 0s,
+          color 9999s ease-in-out 0s,
+          -webkit-text-fill-color 9999s ease-in-out 0s;
+      }
     }
   }
+}
+
+.input-hint {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  text-align: left;
+  padding-left: 1.25rem;
+  margin-top: -0.75rem;
 }
 
 .submit-btn {
@@ -213,12 +309,12 @@ const handleSubmit = async () => {
 }
 
 .error-msg {
-  color: #ef4444;
+  color: var(--color-danger);
   font-size: 0.85rem;
-  background: hsla(0, 80%, 60%, 0.1);
+  background: rgba(var(--color-danger-rgb), 0.1);
   padding: 0.75rem;
   border-radius: 8px;
-  border: 1px solid hsla(0, 80%, 60%, 0.2);
+  border: 1px solid rgba(var(--color-danger-rgb), 0.2);
 }
 
 .auth-footer {

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\DocumentMetadata;
 use App\Jobs\ProcessDocument;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class DocumentController extends Controller
 {
@@ -40,5 +41,48 @@ class DocumentController extends Controller
             'message' => 'File uploaded successfully',
             'document' => $document
         ], 201);
+    }
+
+    public function destroy(Request $request, $id)
+    {
+        $document = DocumentMetadata::where('id', $id)
+            ->where('user_id', $request->user()->id)
+            ->first();
+
+        if (!$document) {
+            return response()->json(['message' => 'Document not found'], 404);
+        }
+
+        // Delete the stored file from disk
+        if ($document->path && Storage::disk('private')->exists($document->path)) {
+            Storage::disk('private')->delete($document->path);
+        }
+
+        $document->delete();
+
+        return response()->json(['message' => 'Document deleted successfully']);
+    }
+
+    public function rename(Request $request, $id)
+    {
+        $request->validate([
+            'filename' => 'required|string|max:255',
+        ]);
+
+        $document = DocumentMetadata::where('id', $id)
+            ->where('user_id', $request->user()->id)
+            ->first();
+
+        if (!$document) {
+            return response()->json(['message' => 'Document not found'], 404);
+        }
+
+        $document->filename = $request->input('filename');
+        $document->save();
+
+        return response()->json([
+            'message' => 'Document renamed successfully',
+            'document' => $document
+        ]);
     }
 }

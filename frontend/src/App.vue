@@ -42,7 +42,7 @@
     background: radial-gradient(
       circle at 30% 30%,
       var(--primary-color),
-      transparent 70%
+      #1a8a8a 70%
     );
     top: -200px;
     right: -200px;
@@ -52,7 +52,7 @@
   .blob-2 {
     width: 450px;
     height: 450px;
-    background: radial-gradient(circle at 30% 30%, #ec4899, transparent 70%);
+    background: radial-gradient(circle at 30% 30%, var(--accent-rose), var(--accent-rose-dark) 70%);
     bottom: -100px;
     left: -100px;
     animation-delay: -5s;
@@ -61,7 +61,7 @@
   .blob-3 {
     width: 400px;
     height: 400px;
-    background: radial-gradient(circle at 30% 30%, #8b5cf6, transparent 70%);
+    background: radial-gradient(circle at 30% 30%, var(--accent-violet), var(--accent-violet-dark) 70%);
     top: 50%;
     left: 20%;
     transform: translateY(-50%);
@@ -71,7 +71,7 @@
   .blob-4 {
     width: 300px;
     height: 300px;
-    background: radial-gradient(circle at 30% 30%, #3b82f6, transparent 70%);
+    background: radial-gradient(circle at 30% 30%, var(--accent-sapphire), var(--accent-sapphire-dark) 70%);
     bottom: 20%;
     right: 15%;
     animation-delay: -15s;
