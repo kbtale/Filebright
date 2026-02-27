@@ -34,9 +34,23 @@ export const apiClient = {
       }
 
       if (!response.ok) {
-        const errorData = await response.json()
+        const text = await response.text()
+        let errorData = { message: text }
+        
+        try {
+          // Attempt to parse as JSON if possible
+          const parsed = JSON.parse(text)
+          errorData = parsed
+        } catch (e) {
+          // Fallback if not JSON
+          if (!text) {
+            errorData = { message: `Error ${response.status}: ${response.statusText}` }
+          }
+        }
+        
         const apiError = new Error(errorData.message || 'API request failed')
         apiError.errors = errorData.errors
+        apiError.status = response.status
         throw apiError
       }
 

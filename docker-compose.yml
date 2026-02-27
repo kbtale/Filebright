@@ -43,6 +43,7 @@ services:
     command: ["php", "artisan", "queue:work"]
     volumes:
       - ./backend/storage:/var/www/storage
+      - ./backend/php.ini:/usr/local/etc/php/conf.d/custom.ini
     depends_on:
       - app
     networks:

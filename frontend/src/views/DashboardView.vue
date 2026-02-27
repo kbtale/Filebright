@@ -15,6 +15,7 @@ import UserProfileMenu from "../components/UserProfileMenu.vue";
 import EmptyState from "../components/EmptyState.vue";
 import { authStore } from "../stores/authStore";
 import { documentStore } from "../stores/documentStore";
+import { notificationStore } from "../stores/notificationStore";
 import { useRouter } from "vue-router";
 
 const router = useRouter();
@@ -90,6 +91,7 @@ onUnmounted(() => {
           <FileText :size="20" />
           <span class="label">Documents</span>
         </div>
+
         <div
           class="nav-item"
           :class="{ active: activeTab === 'chat' }"

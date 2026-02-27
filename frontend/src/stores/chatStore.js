@@ -1,5 +1,6 @@
 import { reactive } from 'vue'
 import { apiClient } from '../utils/apiClient'
+import { notificationStore } from './notificationStore'
 
 export const chatStore = reactive({
   messages: [],
@@ -30,6 +31,7 @@ export const chatStore = reactive({
         content: 'Failed to retrieve response from AI.',
         timestamp: new Date().toISOString()
       })
+      notificationStore.add('Chat error', 'error', err.message)
     } finally {
       this.isLoading = false
     }
