@@ -38,7 +38,8 @@ RUN apk add --no-cache \
   oniguruma \
   icu-libs \
   libssl3 \
-  postgresql-dev
+  postgresql-dev \
+  libmagic
 
 # Install PHP extensions in alpine
 RUN apk add --no-cache $PHPIZE_DEPS \

@@ -1,5 +1,6 @@
 import { reactive, computed } from 'vue'
 import { apiClient } from '../utils/apiClient'
+import { notificationStore } from './notificationStore'
 
 export const documentStore = reactive({
   documents: [],
@@ -23,6 +24,7 @@ export const documentStore = reactive({
       if (data) this.documents = data
     } catch (err) {
       this.error = 'Failed to load documents'
+      notificationStore.add('Could not load documents', 'error', err.message)
     } finally {
       this.isLoading = false
     }
@@ -55,6 +57,7 @@ export const documentStore = reactive({
       if (index !== -1) {
         this.documents[index].status = 'failed'
       }
+      notificationStore.add('Document upload failed', 'error', err.message + (err.errors ? ': ' + JSON.stringify(err.errors) : ''))
     }
   },
 
@@ -65,6 +68,7 @@ export const documentStore = reactive({
       return true
     } catch (err) {
       this.error = 'Failed to delete document'
+      notificationStore.add('Delete failed', 'error', err.message)
       return false
     }
   },
@@ -81,6 +85,7 @@ export const documentStore = reactive({
       return true
     } catch (err) {
       this.error = 'Failed to rename document'
+      notificationStore.add('Rename failed', 'error', err.message)
       return false
     }
   },
@@ -97,8 +102,19 @@ export const documentStore = reactive({
       }
 
       try {
+        const oldDocs = [...this.documents]
         const data = await apiClient.get('/documents')
-        if (data) this.documents = data
+        if (data) {
+          this.documents = data
+          
+          // Check for background transition to 'failed'
+          data.forEach(newDoc => {
+            const oldDoc = oldDocs.find(d => d.id === newDoc.id)
+            if (oldDoc && oldDoc.status !== 'failed' && newDoc.status === 'failed') {
+              notificationStore.add(`Processing failed: ${newDoc.filename}`, 'error', 'The background extraction task failed. Check file integrity or size.')
+            }
+          })
+        }
       } catch (err) {
       }
 

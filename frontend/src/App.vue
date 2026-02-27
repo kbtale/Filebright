@@ -1,3 +1,7 @@
+<script setup>
+import ToastContainer from './components/ui/ToastContainer.vue'
+</script>
+
 <template>
   <div class="app-root">
     <div class="background-blobs">
@@ -7,6 +11,7 @@
       <div class="blob blob-4"></div>
     </div>
     <router-view />
+    <ToastContainer />
   </div>
 </template>
 
