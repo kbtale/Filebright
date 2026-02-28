@@ -29,9 +29,10 @@ class ProcessDocument implements ShouldQueue
         EmbeddingService $embeddingService,
         VectorStorageService $vectorStorage
     ): void {
-        $this->document->update(['status' => 'processing']);
+        $this->document->update(['status' => 'parsing']);
 
         try {
+            // Parsing
             $filePath = Storage::disk('private')->path($this->document->path);
             $text = $parser->parse($filePath, $this->document->mime_type);
 
@@ -39,17 +40,20 @@ class ProcessDocument implements ShouldQueue
                 throw new \Exception("Extraction returned empty text.");
             }
 
+            // Chunking
             $chunks = $chunker->chunk($text);
-            $embeddings = [];
+            $chunkCount = count($chunks);
 
-            foreach ($chunks as $chunk) {
-                $vector = $embeddingService->getEmbedding($chunk);
-                if (empty($vector)) {
-                    throw new \Exception("Failed to generate embedding for a chunk.");
-                }
-                $embeddings[] = $vector;
+            // Embedding
+            $this->document->update(['status' => 'vectorizing']);
+            $embeddings = $embeddingService->getBulkEmbeddings($chunks);
+
+            if (count($embeddings) !== $chunkCount) {
+                throw new \Exception("Failed to generate embeddings for all chunks. Expected {$chunkCount}, got " . count($embeddings));
             }
 
+            // Storing
+            $this->document->update(['status' => 'indexing']);
             $vectorStorage->storeChunks(
                 $this->document->id,
                 $this->document->user_id,
@@ -58,7 +62,7 @@ class ProcessDocument implements ShouldQueue
             );
 
             Log::info("Document processed and stored: {$this->document->filename}", [
-                'chunk_count' => count($chunks)
+                'chunk_count' => $chunkCount
             ]);
 
             $this->document->update(['status' => 'completed']);

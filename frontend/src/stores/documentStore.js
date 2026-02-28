@@ -95,7 +95,8 @@ export const documentStore = reactive({
     this.isPolling = true
     
     const poll = async () => {
-      const hasProcessing = this.documents.some(d => d.status === 'processing' || d.status === 'pending')
+      const activeStatuses = ['pending', 'processing', 'parsing', 'vectorizing', 'indexing']
+      const hasProcessing = this.documents.some(d => activeStatuses.includes(d.status))
       if (!hasProcessing) {
         this.isPolling = false
         return

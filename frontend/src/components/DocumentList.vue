@@ -34,6 +34,9 @@ const displayedDocs = computed(() => documentStore.filteredDocuments);
 const getStatusIcon = (status) => {
   switch (status) {
     case "processing":
+    case "parsing":
+    case "vectorizing":
+    case "indexing":
       return Loader2;
     case "completed":
       return CheckCircle2;
@@ -168,7 +171,7 @@ const submitRename = async () => {
           <component
             :is="getStatusIcon(doc.status)"
             :size="16"
-            :class="{ spin: doc.status === 'processing' }"
+            :class="{ spin: ['processing', 'parsing', 'vectorizing', 'indexing'].includes(doc.status) }"
           />
         </div>
 
@@ -196,7 +199,11 @@ const submitRename = async () => {
           <!-- Normal display mode -->
           <template v-else>
             <div class="filename">{{ doc.filename }}</div>
-            <div class="status-text">{{ doc.status }}</div>
+            <div class="status-row">
+              <span class="status-badge" :class="doc.status">
+                {{ doc.status }}
+              </span>
+            </div>
           </template>
         </div>
 
@@ -416,10 +423,21 @@ const submitRename = async () => {
     text-overflow: ellipsis;
   }
 
-  .status-text {
+  .status-badge {
     font-size: 0.65rem;
     text-transform: capitalize;
     color: var(--text-muted);
+    font-weight: 600;
+
+    &.parsing, &.vectorizing, &.indexing {
+      color: var(--primary-color);
+    }
+    &.completed {
+      color: var(--color-success);
+    }
+    &.failed {
+      color: var(--color-danger);
+    }
   }
 
   &.completed .doc-icon {
@@ -428,7 +446,10 @@ const submitRename = async () => {
   &.failed .doc-icon {
     color: var(--color-danger);
   }
-  &.processing .doc-icon {
+  &.processing .doc-icon,
+  &.parsing .doc-icon,
+  &.vectorizing .doc-icon,
+  &.indexing .doc-icon {
     color: var(--primary-color);
   }
 }
