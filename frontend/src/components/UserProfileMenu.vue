@@ -36,14 +36,14 @@ onUnmounted(() => {
   <div class="profile-menu" ref="menuRef">
     <button class="profile-trigger" @click="toggleMenu" id="user-profile-btn">
       <div class="avatar">
-        {{ authStore.user?.name?.substring(0, 2).toUpperCase() || "JD" }}
+        {{ authStore.user?.name?.substring(0, 2).toUpperCase() || (authStore.isInitializing ? '' : '?') }}
       </div>
       <div class="user-brief">
         <span class="user-name">{{
-          authStore.user?.name || "John Doe"
+          authStore.user?.name || (authStore.isInitializing ? 'Loading...' : 'User')
         }}</span>
         <span class="user-email">{{
-          authStore.user?.email || "user@email.com"
+          authStore.user?.email || ''
         }}</span>
       </div>
       <ChevronDown
@@ -57,12 +57,12 @@ onUnmounted(() => {
       <div v-if="isOpen" class="dropdown-panel glass">
         <div class="dropdown-header">
           <div class="avatar-lg">
-            {{ authStore.user?.name?.substring(0, 2).toUpperCase() || "JD" }}
+            {{ authStore.user?.name?.substring(0, 2).toUpperCase() || (authStore.isInitializing ? '' : '?') }}
           </div>
           <div class="user-details">
-            <span class="name">{{ authStore.user?.name || "John Doe" }}</span>
+            <span class="name">{{ authStore.user?.name || 'User' }}</span>
             <span class="email">{{
-              authStore.user?.email || "user@email.com"
+              authStore.user?.email || ''
             }}</span>
           </div>
         </div>
@@ -297,11 +297,11 @@ onUnmounted(() => {
 /* Mobile */
 @media (max-width: 768px) {
   .user-brief {
-    display: none !important;
+    display: none;
   }
 
   .chevron {
-    display: none !important;
+    display: none;
   }
 
   .profile-trigger {

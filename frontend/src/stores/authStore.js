@@ -1,9 +1,28 @@
 import { reactive } from 'vue'
+import { apiClient } from '../utils/apiClient'
 
 export const authStore = reactive({
-  user: null,
+  user: JSON.parse(localStorage.getItem('fb_user') || 'null'),
   token: localStorage.getItem('fb_token'),
   isAuthenticated: !!localStorage.getItem('fb_token'),
+  isInitializing: false,
+
+  async initialize() {
+    if (!this.token) return
+    
+    this.isInitializing = true
+    try {
+      const userData = await apiClient.get('/user')
+      if (userData) {
+        this.setUser(userData)
+      }
+    } catch (err) {
+      console.error('[AuthStore] Session verification failed:', err)
+      this.logout()
+    } finally {
+      this.isInitializing = false
+    }
+  },
 
   setToken(token) {
     this.token = token
@@ -13,6 +32,7 @@ export const authStore = reactive({
 
   setUser(user) {
     this.user = user
+    localStorage.setItem('fb_user', JSON.stringify(user))
   },
 
   logout() {
@@ -20,5 +40,6 @@ export const authStore = reactive({
     this.user = null
     this.isAuthenticated = false
     localStorage.removeItem('fb_token')
+    localStorage.removeItem('fb_user')
   }
 })

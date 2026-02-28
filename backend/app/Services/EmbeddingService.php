@@ -17,11 +17,13 @@ class EmbeddingService
     }
 
     /**
-     * Get the vector embedding for a given text.
+     * Get vector embeddings for multiple text chunks in a single API call.
      */
-    public function getEmbedding(string $text): array
+    public function getBulkEmbeddings(array $texts): array
     {
-        $sanitizedText = $this->sanitize($text);
+        if (empty($texts)) return [];
+
+        $sanitizedTexts = array_map([$this, 'sanitize'], $texts);
         
         try {
             $response = Http::withHeaders([
@@ -29,19 +31,34 @@ class EmbeddingService
                 'HTTP-Referer' => config('app.url'),
             ])->post('https://openrouter.ai/api/v1/embeddings', [
                 'model' => $this->model,
-                'input' => $sanitizedText,
+                'input' => $sanitizedTexts,
             ]);
 
             if ($response->failed()) {
-                Log::error("OpenRouter Embedding API failed: " . $response->body());
+                Log::error("OpenRouter Bulk Embedding API failed: " . $response->body());
                 return [];
             }
 
-            return $response->json('data.0.embedding') ?? [];
+            $data = $response->json('data');
+            if (empty($data)) return [];
+
+            // Sort by index if provided by API, though usually it matches order
+            usort($data, fn($a, $b) => ($a['index'] ?? 0) <=> ($b['index'] ?? 0));
+
+            return array_map(fn($item) => $item['embedding'], $data);
         } catch (\Exception $e) {
-            Log::error("Embedding API Exception: " . $e->getMessage());
+            Log::error("Bulk Embedding API Exception: " . $e->getMessage());
             return [];
         }
+    }
+
+    /**
+     * Get the vector embedding for a given text.
+     */
+    public function getEmbedding(string $text): array
+    {
+        $response = $this->getBulkEmbeddings([$text]);
+        return $response[0] ?? [];
     }
 
     /**
